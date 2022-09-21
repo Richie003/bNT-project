@@ -19,7 +19,7 @@ class RegisterForm(forms.ModelForm):
         return email
 
     def clean_password2(self):
-        # Check that the two password entries match
+        # Checks that the two password entries match
         password1 = self.cleaned_data.get("password1")
         password2 = self.cleaned_data.get("password2")
         if password1 and password2 and password1 != password2:
@@ -27,7 +27,7 @@ class RegisterForm(forms.ModelForm):
         return password2
 
     def save(self, commit=True):
-        # Save the provided password in hashed format
+        # Save the provided password in confused hashed format
         user = super(RegisterForm, self).save(commit=False)
         user.set_password(self.cleaned_data["password1"])
         if commit:
@@ -48,18 +48,13 @@ class UserAdminCreationForm(forms.ModelForm):
         fields = ('email', 'fullname', 'tel')
 
     def clean_password2(self):
-        # Check that the two password entries match
+        # Checks that the two password entries match
         password1 = self.cleaned_data.get("password1")
         password2 = self.cleaned_data.get("password2")
         if password1 and password2 and password1 != password2:
             raise forms.ValidationError("Passwords don't match")
         return password2
 
-    # def clean_reg(self):
-    #     num = self.cleaned_data.get('reg_no')
-    #     if '/' not in num:
-    #         raise forms.ValidationError('not a password')
-    #     return num
 
     def save(self, commit=True):
         # Save the provided password in hashed format
@@ -71,10 +66,6 @@ class UserAdminCreationForm(forms.ModelForm):
 
 
 class UserAdminChangeForm(forms.ModelForm):
-    """A form for updating users. Includes all the fields on
-    the user, but replaces the password field with admin's
-    password hash display field.
-    """
     password = ReadOnlyPasswordHashField()
 
     class Meta:
@@ -82,7 +73,4 @@ class UserAdminChangeForm(forms.ModelForm):
         fields = ('email', 'password', 'active', 'admin')
 
     def clean_password(self):
-        # Regardless of what the user provides, return the initial value.
-        # This is done here, rather than on the field, because the
-        # field does not have access to the initial value
         return self.initial["password"]
